@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Пожелания солдатам</title>
+
+<style>
+* { box-sizing: border-box; }
+
+:root{
+  --bg1:#1e293b;
+  --bg2:#020617;
+  --card: rgba(15,23,42,.55);
+  --stroke: rgba(148,163,184,.18);
+  --text:#e5e7eb;
+  --muted:#94a3b8;
+  --accent:#22c55e;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:system-ui, Arial;
+  background: radial-gradient(circle at top, var(--bg1), var(--bg2));
+  color:var(--text);
+  display:flex;
+  flex-direction:column;
+}
+
+header{
+  text-align:center;
+  padding:18px 12px 10px;
+}
+
+h1{ margin:0; font-size:24px; }
+.subtitle{ margin-top:6px; color:var(--muted); font-size:14px; }
+
+.container{
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:12px;
+}
+
+.card{
+  width:100%;
+  max-width:560px;
+  border-radius:20px;
+  background:var(--card);
+  border:1px solid var(--stroke);
+  backdrop-filter: blur(12px);
+  box-shadow:0 10px 40px rgba(0,0,0,.35);
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+#wishText{
+  text-align:center;
+  font-size:16px;
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgba(2,6,23,.35);
+  border:1px solid rgba(148,163,184,.14);
+}
+
+.imageWrap{
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(148,163,184,.14);
+  background:rgba(0,0,0,.5);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#wishImage{
+  width:100%;
+  height:clamp(220px, 42vh, 360px);
+  object-fit:contain;          /* ВИДНО ЦЕЛИКОМ */
+  object-position:center;
+  display:block;
+}
+
+.row, .musicRow{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px;
+  border-radius:16px;
+  background:rgba(2,6,23,.35);
+  border:1px solid rgba(148,163,184,.14);
+}
+
+.btn{
+  border:1px solid rgba(148,163,184,.18);
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  padding:10px 12px;
+  border-radius:14px;
+  font-size:14px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  white-space:nowrap;
+}
+
+.btnPrimary{
+  border-color:rgba(34,197,94,.35);
+  background:rgba(34,197,94,.12);
+}
+
+.spacer{ flex:1; }
+
+.range{
+  width:100%;
+  accent-color:var(--accent);
+}
+
+footer{
+  text-align:center;
+  padding:12px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%);
+  background:rgba(34,197,94,.95);
+  color:#000;
+  padding:10px 14px;
+  border-radius:14px;
+  opacity:0;
+  transition:.25s;
+}
+.show{ opacity:1; }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🪖 Пожелания солдатам</h1>
+  <div class="subtitle">Слова поддержки и силы</div>
+</header>
+
+<div class="container">
+<div class="card">
+
+<div id="wishText"></div>
+
+<div class="imageWrap">
+  <img id="wishImage" referrerpolicy="no-referrer" alt="Фото">
+</div>
+
+<div class="row">
+  <button class="btn btnPrimary" onclick="prevWish()">◀ Назад</button>
+  <button class="btn btnPrimary" onclick="nextWish()">Вперёд ▶</button>
+  <div class="spacer"></div>
+  <button class="btn" onclick="copyWish()">📋 Скопировать</button>
+</div>
+
+<div class="musicRow">
+  <button class="btn" onclick="toggleMusic()" id="musicBtn">🎵 Музыка</button>
+  <input class="range" type="range" min="0" max="1" step="0.01" value="0.5"
+         oninput="music.volume=this.value">
+</div>
+
+</div>
+</div>
+
+<footer>От Дмитриевича Богдана Германа ❤️</footer>
+<div id="toast" class="toast">Скопировано</div>
+
+<audio id="bgMusic" loop>
+  <source src="Den_Pobedy.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const wishes = [
+  {
+    text:"Берегите себя и возвращайтесь домой живыми и здоровыми.",
+    img:"https://cdn.culture.ru/images/929e606d-c80c-546a-96e0-7dd678bb8110"
+  },
+  {
+    text:"Крепких сил и стойкости.",
+    img:"https://s00.yaplakal.com/pics/pics_original/0/7/7/9443770.jpg"
+  },
+  {
+    text:"Мы гордимся вами.",
+    img:"https://aif-s3.aif.ru/images/031/402/ee4468029ff9166104ca80b76d3688a6.jpg"
+  },
+  {
+    text:"Пусть рядом будут надёжные товарищи.",
+    img:"https://s7.cdn.eg.ru/upimg/photo/72542.jpg"
+  },
+  {
+    text:"Спасибо за вашу службу.",
+    img:"https://ic.pics.livejournal.com/soldat_ivan/54561455/98217/98217_600.jpg"
+  },
+  {
+    text:"Пусть путь будет безопасным.",
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/2018_Moscow_Victory_Day_Parade_40.jpg/1600px-2018_Moscow_Victory_Day_Parade_40.jpg"
+  },
+  {
+    text:"Спасибо за долг,честь и отвагу.",
+    img:"https://avatars.mds.yandex.net/i?id=1e35e8f37a13442e43737729f36e87e5_l-10919935-images-thumbs&n=33&w=1687&h=1125"
+  },
+  {
+    text:"Только вперёд !",
+    img:"https://yt3.googleusercontent.com/ytc/AIdro_ndPXU4F-YUkAtqntr6FR0vD-VkZgT1RATHo6OYgDVg8aE=s160-c-k-c0x00ffffff-no-rj"
+  },
+  {
+    text:"Один за всех и все за одного!",
+    img:"https://avatars.mds.yandex.net/i?id=a99230f60d5e74fe82fcd6dde6b58b73_l-5235074-images-thumbs&n=13"
+  },
+  {
+    text:"Вы все герои!",
+    img:"https://avatars.mds.yandex.net/i?id=b0af22c348cccf07ea972281dd1a0294_l-5232997-images-thumbs&n=13"
+  },
+  {
+    text:"Мы ждем вас!",
+    img:"https://ic.pics.livejournal.com/777grigory/48857205/812925/812925_original.jpg"
+  },
+  {
+    text:"Мы победим!",
+    img:"https://rostec.ru/upload/iblock/957/ka2yn6vgjn8k9exytjaksds0op7i4qo1.jpg"
+  }
+];
+
+let i=0;
+const img=document.getElementById("wishImage");
+const text=document.getElementById("wishText");
+const toast=document.getElementById("toast");
+const music=document.getElementById("bgMusic");
+const musicBtn=document.getElementById("musicBtn");
+
+function render(){
+  text.textContent=wishes[i].text;
+  img.src=wishes[i].img;
+}
+
+function nextWish(){ i=(i+1)%wishes.length; render(); }
+function prevWish(){ i=(i-1+wishes.length)%wishes.length; render(); }
+
+function copyWish(){
+  navigator.clipboard.writeText(text.textContent);
+  toast.classList.add("show");
+  setTimeout(()=>toast.classList.remove("show"),900);
+}
+
+function toggleMusic(){
+  if(music.paused){ music.play(); musicBtn.textContent="⏸ Музыка"; }
+  else{ music.pause(); musicBtn.textContent="🎵 Музыка"; }
+}
+
+render();
+</script>
+
+</body>
+</html>
